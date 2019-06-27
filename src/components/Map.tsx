@@ -6,7 +6,7 @@ import React, {
     useState,
 } from 'react'
 import L from 'leaflet'
-import { strollerIcon, eventIcon, locationIcon } from './map-icons'
+import { eventIcon, locationIcon, logoIcon, subEventsIcons } from './map-icons'
 import { PersonDetails } from './person-details'
 import { EventDetails } from './event-details'
 import { LocationDetails } from './location-details'
@@ -14,6 +14,7 @@ import { Person, Event, Location, BaseMapItem } from '../types'
 import roniThumb from '../roni.png'
 import { getEventsData, getUsersData, getLocationsData } from '../services/db'
 import css from './map.module.css'
+
 const TEL_LOC: [number, number] = [32.0853, 34.7818]
 
 const useMapData = () => {
@@ -141,10 +142,14 @@ export const Map: FunctionComponent<{}> = () => {
                 marker.on('click', onClick as any)
                 markers.push(marker)
             }
-            peopleList.map(item => generateMarker(item, 'person', strollerIcon))
+            peopleList.map(item => generateMarker(item, 'person', logoIcon))
             eventList.map(item => generateMarker(item, 'event', eventIcon))
             locationList.map(item =>
-                generateMarker(item, 'location', locationIcon)
+                generateMarker(
+                    item,
+                    'location',
+                    subEventsIcons[item.subtype] || locationIcon
+                )
             )
         }
         return () => {
