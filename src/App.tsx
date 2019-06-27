@@ -7,8 +7,8 @@ import './App.scss'
 export const App: FunctionComponent<{}> = () => (
     <Router>
         <div className="App">
-            <Route path="/map" component={Map}></Route>
-            <Route path="/intro" component={Intro}></Route>
+            <Route path="/map" component={Map} />
+            <Route path="/" component={Intro} />
         </div>
     </Router>
 )
