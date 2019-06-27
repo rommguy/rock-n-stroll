@@ -6,28 +6,30 @@ import React, {
     useState,
 } from 'react'
 import L from 'leaflet'
-import { strollerIcon, eventIcon } from './map-icons'
+import { strollerIcon, eventIcon, locationIcon } from './map-icons'
 import { PersonDetails } from './person-details'
 import { EventDetails } from './event-details'
-import { Person, Event, BaseMapItem } from '../types'
+import { LocationDetails } from './location-details'
+import { Person, Event, Location, BaseMapItem } from '../types'
 import roniThumb from '../roni.png'
-import { getEventsData, getUsersData } from '../services/db'
+import { getEventsData, getUsersData, getLocationsData } from '../services/db'
 
 const TEL_LOC: [number, number] = [32.0853, 34.7818]
 
 const useMapData = () => {
     const [peopleList, setUsers] = useState<Person[]>([])
     const [eventList, setEvents] = useState<Event[]>([])
+    const [locationList, setLocations] = useState<Location[]>([])
 
     useEffect(() => {
         getEventsData().then((data: any) => {
             const events: Event[] = []
             for (const doc of data.docs) {
-                const loc = doc.get('location') || TEL_LOC
+                const loc = doc.get('location')
                 events.push({
                     id: doc.id,
                     name: doc.get('name'),
-                    location: [loc.latitude, loc.longitude],
+                    location: loc ? [loc.latitude, loc.longitude] : TEL_LOC,
                     thumbUrl: '',
                 })
             }
@@ -47,12 +49,25 @@ const useMapData = () => {
             }
             setUsers(people)
         })
+        getLocationsData().then((data: any) => {
+            const locations: Event[] = []
+            for (const doc of data.docs) {
+                const loc = doc.get('location')
+                locations.push({
+                    id: doc.id,
+                    name: doc.get('name'),
+                    location: loc ? [loc.latitude, loc.longitude] : TEL_LOC,
+                    thumbUrl: '',
+                })
+            }
+            setLocations(locations)
+        })
     }, [])
-    return { eventList, peopleList }
+    return { eventList, peopleList, locationList }
 }
 
 export const Map: FunctionComponent<{}> = () => {
-    const { eventList, peopleList } = useMapData()
+    const { eventList, peopleList, locationList } = useMapData()
 
     const [popupContent, setPopupContent] = useState<React.ReactNode>(null)
     const { current: popup } = useRef(L.popup({}))
@@ -65,7 +80,11 @@ export const Map: FunctionComponent<{}> = () => {
         ({ target }: L.LeafletEvent) => {
             const { id, type } = target.options
             setPopupContent(
-                getPopupContent(type, id, { eventList, peopleList })
+                getPopupContent(type, id, {
+                    eventList,
+                    peopleList,
+                    locationList,
+                })
             )
             const currentItem = selectedItemRef.current
             if (currentItem) {
@@ -74,7 +93,7 @@ export const Map: FunctionComponent<{}> = () => {
             selectedItemRef.current = target
             target.bindPopup(popup).openPopup()
         },
-        [popup, eventList, peopleList]
+        [popup, eventList, peopleList, locationList]
     )
 
     useEffect(() => {
@@ -106,7 +125,6 @@ export const Map: FunctionComponent<{}> = () => {
     useEffect(() => {
         const map = mapRef.current
         const markers: L.Marker[] = []
-        console.log('render map with ', eventList, peopleList)
         if (map) {
             const generateMarker = (
                 { id, location }: BaseMapItem,
@@ -124,11 +142,14 @@ export const Map: FunctionComponent<{}> = () => {
             }
             peopleList.map(item => generateMarker(item, 'person', strollerIcon))
             eventList.map(item => generateMarker(item, 'event', eventIcon))
+            locationList.map(item =>
+                generateMarker(item, 'location', locationIcon)
+            )
         }
         return () => {
             markers.forEach(marker => marker.remove())
         }
-    }, [mapRef.current, peopleList, eventList])
+    }, [mapRef.current, peopleList, eventList, locationList])
 
     return (
         <div>
@@ -141,7 +162,11 @@ export const Map: FunctionComponent<{}> = () => {
 function getPopupContent(
     type: string,
     queryId: string,
-    { eventList, peopleList }: { eventList: Event[]; peopleList: Person[] }
+    {
+        eventList,
+        peopleList,
+        locationList,
+    }: { eventList: Event[]; peopleList: Person[]; locationList: Location[] }
 ) {
     let content: React.ReactNode = null
     switch (type) {
@@ -155,6 +180,12 @@ function getPopupContent(
             const eventData = eventList.find(({ id }) => queryId === id)
             if (eventData) {
                 content = <EventDetails data={eventData} />
+            }
+            break
+        case 'location':
+            const locationData = locationList.find(({ id }) => queryId === id)
+            if (locationData) {
+                content = <LocationDetails data={locationData} />
             }
             break
     }

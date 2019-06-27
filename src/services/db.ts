@@ -42,6 +42,12 @@ export const getEventsData = () =>
         .collection('events')
         .get()
 
+export const getLocationsData = () =>
+    app
+        .firestore()
+        .collection('locations')
+        .get()
+
 export const getCurrentUserEmail = (): string => {
     const searchParams = new URLSearchParams(window.location.search)
     return searchParams.get('email') || ''

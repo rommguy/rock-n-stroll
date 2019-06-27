@@ -15,7 +15,7 @@ export interface Event extends BaseMapItem {
     thumbUrl: string
 }
 
-export interface Place extends BaseMapItem {
+export interface Location extends BaseMapItem {
     name: string
     thumbUrl: string
 }
