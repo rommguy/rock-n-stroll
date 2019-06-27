@@ -29,7 +29,7 @@ export const LocationDetails = ({ data }: LocationDetailsProps) => {
             </div>
             <div className={css.actions}>
                 <button className={css.reportBtn}>
-                    <img src={lightningIconSvg} />
+                    <img src={lightningIconSvg} alt="דווח על מפגע" />
                     דווח על מפגע
                 </button>
             </div>

@@ -23,7 +23,7 @@ export const PersonDetails = ({ data }: PersonDetailsProps) => {
             </div>
             <div className={css.actions}>
                 <button className={css.joinBtn}>
-                    <img src={handIconSvg} />
+                    <img src={handIconSvg} alt="בקש להצטרף" />
                     בקש להצטרף
                 </button>
             </div>

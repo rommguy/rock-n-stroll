@@ -158,7 +158,7 @@ export const Map: FunctionComponent<{}> = () => {
         return () => {
             markers.forEach(marker => marker.remove())
         }
-    }, [mapRef.current, peopleList, eventList, locationList])
+    }, [peopleList, eventList, locationList, onClick])
 
     return (
         <div className={css.root}>
