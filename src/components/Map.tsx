@@ -13,7 +13,7 @@ import { LocationDetails } from './location-details'
 import { Person, Event, Location, BaseMapItem } from '../types'
 import roniThumb from '../roni.png'
 import { getEventsData, getUsersData, getLocationsData } from '../services/db'
-
+import css from './map.module.css'
 const TEL_LOC: [number, number] = [32.0853, 34.7818]
 
 const useMapData = () => {
@@ -152,7 +152,8 @@ export const Map: FunctionComponent<{}> = () => {
     }, [mapRef.current, peopleList, eventList, locationList])
 
     return (
-        <div>
+        <div className={css.root}>
+            {/* <button onClick={testClick}>add</button> */}
             <div id="map" style={{ height: '100vh' }} />
             <div ref={popupWrapperRef}>{popupContent}</div>
         </div>
