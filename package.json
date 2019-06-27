@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "history": "^4.9.0",
+    "leaflet": "^1.5.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1"
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "3.0.1",
+    "typescript": "^3.5.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -27,5 +31,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/history": "^4.7.2",
+    "@types/leaflet": "^1.4.4",
+    "@types/react": "^16.8.22",
+    "@types/react-dom": "^16.8.4",
+    "@types/react-router": "^5.0.2",
+    "@types/react-router-dom": "^4.3.4",
+    "node-sass": "^4.12.0",
+    "prettier": "^1.18.2"
   }
 }
