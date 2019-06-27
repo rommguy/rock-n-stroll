@@ -14,7 +14,7 @@ export const LocationDetails = ({ data }: LocationDetailsProps) => {
             <img
                 className={css.img}
                 src={data.thumbUrl || emptyPng}
-                alt={data.name}
+                alt={data.name || 'אירוע'}
             />
             <div className={css.info}>
                 <div className={css.name}>{data.name}</div>

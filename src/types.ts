@@ -13,6 +13,9 @@ export interface Person extends BaseMapItem {
 export interface Event extends BaseMapItem {
     name: string
     thumbUrl: string
+    price: string
+    address: string
+    time: string
 }
 
 export interface Location extends BaseMapItem {

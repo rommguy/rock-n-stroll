@@ -31,7 +31,10 @@ const useMapData = () => {
                     id: doc.id,
                     name: doc.get('name'),
                     location: loc ? [loc.latitude, loc.longitude] : TEL_LOC,
-                    thumbUrl: '',
+                    thumbUrl: doc.get('thumbUrl'),
+                    price: doc.get('price') || 0,
+                    address: doc.get('address') || '',
+                    time: doc.get('time') || '',
                 })
             }
             setEvents(events)
