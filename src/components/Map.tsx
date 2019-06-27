@@ -6,9 +6,10 @@ import React, {
     useState,
 } from 'react'
 import L from 'leaflet'
-import { strollerIcon } from './map-icons'
+import { strollerIcon, eventIcon } from './map-icons'
 import { PersonDetails } from './person-details'
-import { Person } from '../types'
+import { EventDetails } from './event-details'
+import { Person, Event, BaseMapItem } from '../types'
 import ronyThumb from '../roni.png'
 
 const peopleList: Person[] = [
@@ -31,6 +32,14 @@ const peopleList: Person[] = [
         location: [32.0833, 34.7808],
         name: 'גיא',
         status: 'כותב קוד',
+        thumbUrl: ronyThumb,
+    },
+]
+const eventList: Event[] = [
+    {
+        id: 'e-1',
+        location: [32.085, 34.7808],
+        name: 'חפש את המטמון לגילאי 3 ומטה',
         thumbUrl: ronyThumb,
     },
 ]
@@ -78,15 +87,21 @@ export const Map: FunctionComponent<{}> = () => {
         ).addTo(map)
 
         // markers
-        for (const person of peopleList) {
-            const marker = L.marker(person.location, {
-                icon: strollerIcon,
-                id: person.id,
-                type: 'person',
+        const generateMarker = (
+            { id, location }: BaseMapItem,
+            type: string,
+            icon: L.Icon
+        ) => {
+            const marker = L.marker(location, {
+                icon,
+                id,
+                type,
             } as any)
             marker.addTo(map)
             marker.on('click', onClick as any)
         }
+        peopleList.map(item => generateMarker(item, 'person', strollerIcon))
+        eventList.map(item => generateMarker(item, 'event', eventIcon))
     }, [onClick, popup])
 
     return (
@@ -104,6 +119,12 @@ function getPopupContent(type: string, queryId: string) {
             const personData = peopleList.find(({ id }) => queryId === id)
             if (personData) {
                 content = <PersonDetails data={personData} />
+            }
+            break
+        case 'event':
+            const eventData = eventList.find(({ id }) => queryId === id)
+            if (eventData) {
+                content = <EventDetails data={eventData} />
             }
             break
     }
