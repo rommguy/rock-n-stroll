@@ -1,0 +1,64 @@
+.carousel-wrapper {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+
+  &.carousel-wrapper-dots {
+    overflow: visible;
+  }
+
+
+  .slick-dots {
+    position: static;
+    line-height: 1;
+  }
+
+  .slick-dots li {
+    margin: 0;
+    width: auto;
+    height: auto;
+    &.slick-active {
+      button {
+        background: gray;
+      }
+    }
+    button {
+      padding: 0;
+      width: 9px;
+      height: 9px;
+      background: #cccccc;
+      border-radius: 50%;
+      margin: 0 6.6px;
+      overflow: hidden;
+      display: block;
+      font-size: 0;
+      &:before {
+        display: none;
+      }
+    }
+  }
+
+  &.height-as-parent {
+    height: 100%;
+
+    .slick-slider {
+      height: 100%;
+
+      .slick-list {
+        height: 100%;
+
+        .slick-track {
+          height: 100%;
+
+          .slick-slide {
+            height: 100%;
+
+            > div {
+              height: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+}

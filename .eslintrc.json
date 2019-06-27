@@ -1,0 +1,123 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 7
+  },
+  "rules": {
+    "no-empty": [
+      2,
+      {
+        "allowEmptyCatch": true
+      }
+    ],
+    "radix": "error",
+    "jest/no-focused-tests": "error",
+    "jest/no-disabled-tests": 1,
+    "consistent-return": 2,
+    "dot-notation": 2,
+    "no-else-return": 2,
+    "no-shadow": 2,
+    "no-return-assign": 2,
+    "no-undef-init": 2,
+    "no-undef": 2,
+    "no-use-before-define": 0,
+    "prefer-template": 2,
+    "quotes": 0,
+    "eol-last": 0,
+    "no-console": 2,
+    "no-unreachable": "error",
+    "arrow-body-style": [2, "as-needed"],
+    "arrow-spacing": [2, { "before": true, "after": true }],
+    "arrow-parens": [2, "as-needed"],
+    "no-duplicate-imports": 2,
+    "no-unused-vars": [1, { "ignoreRestSiblings": true }],
+    "sort-imports": [
+      2,
+      {
+        "ignoreDeclarationSort": true
+      }
+    ],
+    "no-var": 2,
+    "object-shorthand": 2,
+    "prefer-const": 2,
+    "no-extra-semi": 2,
+    "semi": [2, "never"],
+    "prefer-arrow-callback": [
+      1,
+      {
+        "allowNamedFunctions": false,
+        "allowUnboundThis": true
+      }
+    ],
+    "prefer-rest-params": 2,
+    "prefer-spread": 2,
+    "react/prop-types": 0,
+    "react/no-unused-prop-types": 2,
+    "react/sort-comp": 2,
+    "react/display-name": 0,
+    "react/no-danger": 2,
+    "react/no-did-mount-set-state": 2,
+    "react/no-did-update-set-state": 1,
+    "react/self-closing-comp": 2,
+    "react/jsx-wrap-multilines": 2,
+    "react/jsx-key": 2,
+    "react/jsx-pascal-case": 2,
+    "react/jsx-uses-vars": 2,
+    "@typescript-eslint/camelcase": 0,
+    "@typescript-eslint/explicit-function-return-type": 0,
+    "@typescript-eslint/explicit-member-accessibility": 0,
+    "@typescript-eslint/no-use-before-define": 0,
+    "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "@typescript-eslint/no-explicit-any": 0
+  },
+  "plugins": ["@typescript-eslint", "react", "jest"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "prettier/@typescript-eslint",
+    "prettier/react",
+    "prettier/babel",
+    "plugin:react/recommended"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "globals": {
+    "FB": true,
+    "analytics": true,
+    "process": true
+  },
+  "overrides": [
+    {
+      "files": ["*.test.*"],
+      "env": {
+        "jest": true,
+        "jasmine": true,
+        "browser": true
+      },
+      "globals": {
+        "window": true
+      },
+      "rules": {
+        "@typescript-eslint/explicit-function-return-type": 0
+      }
+    },
+    {
+      "files": ["*.tsx", "*.js"],
+      "rules": {
+        "no-unused-vars": [2, { "varsIgnorePattern": "React", "ignoreRestSiblings": true }]
+      }
+    }
+  ]
+}
