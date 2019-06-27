@@ -9,8 +9,6 @@ import icon4 from '../icons/intro/Icons-04.svg'
 import Button from '@material-ui/core/Button'
 import './Intro.scss'
 
-// ffd0d0
-
 const introSlides: IntroSlideDef[] = [
     {
         icon: icon4,
