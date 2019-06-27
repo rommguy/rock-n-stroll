@@ -55,16 +55,36 @@ export const getCurrentUserEmail = (): string => {
 }
 
 export const createMatchRequest = (
-    requestingUserId: string,
-    targetUserId: string
-): Promise<firestore.DocumentReference> => {
-    const req: MatchRequest = {
-        requestingUserEmail: requestingUserId,
-        targetUserEmail: targetUserId,
-        status: MatchStatus.PENDING,
-    }
-    return app
+    requestingUserEmail: string,
+    targetUserEmail: string
+): Promise<firestore.DocumentReference> =>
+    app
         .firestore()
         .collection('matchRequests')
-        .add(req)
+        .add({
+            requestingUserEmail,
+            targetUserEmail,
+            status: MatchStatus.PENDING,
+        })
+
+export const resolveMatchRequest = async (
+    requestingUserEmail: string,
+    targetUserEmail: string,
+    status: MatchStatus
+) => {
+    const results = await app
+        .firestore()
+        .collection('matchRequests')
+        .where('requestingUserEmail', '==', requestingUserEmail)
+        .where('targetUserEmail', '==', targetUserEmail)
+        .get()
+    if (results.docs.length) {
+        const requestObj: MatchRequest = results.docs[0].data() as MatchRequest
+        const updatedRequest = { ...requestObj, status }
+        await app
+            .firestore()
+            .collection('matchRequests')
+            .doc(results.docs[0].id)
+            .set(updatedRequest)
+    }
 }
