@@ -7,16 +7,36 @@ import React, {
 } from 'react'
 import L from 'leaflet'
 import { strollerIcon } from './map-icons'
+import { PersonDetails } from './person-details'
 import { Person } from '../types'
+import ronyThumb from '../roni.png'
 
 const peopleList: Person[] = [
-    { id: '1', location: [32.0853, 34.7818] },
-    { id: '2', location: [32.0853, 34.7828] },
-    { id: '3', location: [32.0833, 34.7808] },
+    {
+        id: '1',
+        location: [32.0853, 34.7818],
+        name: 'רוני',
+        status: 'ב-ping',
+        thumbUrl: ronyThumb,
+    },
+    {
+        id: '2',
+        location: [32.0853, 34.7828],
+        name: 'עומרי',
+        status: 'מעשן',
+        thumbUrl: ronyThumb,
+    },
+    {
+        id: '3',
+        location: [32.0833, 34.7808],
+        name: 'גיא',
+        status: 'כותב קוד',
+        thumbUrl: ronyThumb,
+    },
 ]
 
 export const Map: FunctionComponent<{}> = () => {
-    const [selectedItemId, setSelectedItem] = useState('')
+    const [popupContent, setPopupContent] = useState<React.ReactNode>(null)
     const { current: popup } = useRef(L.popup({}))
     const selectedItemRef = useRef<L.Marker | null>(null)
 
@@ -55,7 +75,8 @@ export const Map: FunctionComponent<{}> = () => {
 
     const onClick = useCallback<L.LeafletEventHandlerFn>(
         ({ target }: L.LeafletEvent) => {
-            setSelectedItem(target.options.id)
+            const { id, type } = target.options
+            setPopupContent(getPopupContent(type, id))
             const currentItem = selectedItemRef.current
             if (currentItem) {
                 currentItem.unbindPopup()
@@ -71,7 +92,17 @@ export const Map: FunctionComponent<{}> = () => {
     return (
         <div>
             <div id="map" style={{ height: '100vh' }} />
-            <div ref={popupWrapperRef}>{selectedItemId}</div>
+            <div ref={popupWrapperRef}>{popupContent}</div>
         </div>
     )
+}
+
+function getPopupContent(type: string, queryId: string) {
+    switch (type) {
+        case 'person':
+            const personData = peopleList.find(({ id }) => queryId === id)
+            return personData ? <PersonDetails data={personData} /> : null
+            break
+    }
+    return null
 }
