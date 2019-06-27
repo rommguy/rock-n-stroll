@@ -50,11 +50,12 @@ const useMapData = () => {
             setUsers(people)
         })
         getLocationsData().then((data: any) => {
-            const locations: Event[] = []
+            const locations: Location[] = []
             for (const doc of data.docs) {
                 const loc = doc.get('location')
                 locations.push({
                     id: doc.id,
+                    subtype: doc.get('subtype'),
                     name: doc.get('name'),
                     location: loc ? [loc.latitude, loc.longitude] : TEL_LOC,
                     thumbUrl: '',

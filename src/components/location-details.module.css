@@ -1,24 +1,58 @@
 .root {
+    direction: rtl;
+    text-align: right;
     width: 200px;
     display: grid;
     grid-template-areas:
-        'img details'
-        '- details'
+        'img info'
+        'details details'
         'actions actions';
     grid-auto-columns: 5em auto;
-    grid-auto-rows: 5em auto 2em;
+    grid-auto-rows: 5em auto auto;
 }
 .img {
     grid-area: img;
     object-fit: cover;
     width: 100%;
     height: 100%;
+    border-radius: 50%;
 }
 .actions {
     grid-area: actions;
+    margin-top: 1em;
+}
+.info {
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1em;
 }
 .details {
-    direction: rtl;
-    text-align: right;
     grid-area: details;
+    border-top: 1px solid #e8e6e4;
+    margin-top: 1em;
+}
+
+.name {
+    font-weight: bold;
+    font-size: 1.5em;
+}
+.subtype {
+    font-size: 1em;
+}
+.address {
+    margin-top: 1em;
+}
+
+.reportBtn {
+    background: #6bad90;
+    color: #ecefea;
+    padding: 0.5em;
+}
+.reportBtn > img {
+    width: 1.5em;
+    vertical-align: middle;
+    padding-inline-end: 1em;
 }
