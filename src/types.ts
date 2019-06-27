@@ -1,6 +1,7 @@
 import * as H from "history";
 
 export interface Person {
+  id: string
   location: [number, number];
 }
 
