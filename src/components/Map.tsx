@@ -10,64 +10,49 @@ import { strollerIcon, eventIcon } from './map-icons'
 import { PersonDetails } from './person-details'
 import { EventDetails } from './event-details'
 import { Person, Event, BaseMapItem } from '../types'
-import ronyThumb from '../roni.png'
-import { getEventsData } from '../services/db'
+import roniThumb from '../roni.png'
+import { getEventsData, getUsersData } from '../services/db'
 
-const peopleList: Person[] = [
-    {
-        id: '1',
-        location: [32.0853, 34.7818],
-        name: 'רוני',
-        status: 'ב-ping',
-        thumbUrl: ronyThumb,
-    },
-    {
-        id: '2',
-        location: [32.0853, 34.7828],
-        name: 'עומרי',
-        status: 'מעשן פחות',
-        thumbUrl: ronyThumb,
-    },
-    {
-        id: '3',
-        location: [32.0833, 34.7808],
-        name: 'גיא',
-        status: 'כותב קוד',
-        thumbUrl: ronyThumb,
-    },
-]
-// const eventList: Event[] = [
-//     {
-//         id: 'e-1',
-//         location: [32.085, 34.7808],
-//         name: 'חפש את המטמון לגילאי 3 ומטה',
-//         thumbUrl: ronyThumb,
-//     },
-// ]
+const TEL_LOC: [number, number] = [32.0853, 34.7818]
 
 const useMapData = () => {
+    const [peopleList, setUsers] = useState<Person[]>([])
     const [eventList, setEvents] = useState<Event[]>([])
 
     useEffect(() => {
         getEventsData().then((data: any) => {
             const events: Event[] = []
             for (const doc of data.docs) {
-                const loc = doc.get('location')
+                const loc = doc.get('location') || TEL_LOC
                 events.push({
                     id: doc.id,
                     name: doc.get('name'),
-                    location: [loc.longitude, loc.latitude],
+                    location: [loc.latitude, loc.longitude],
                     thumbUrl: '',
                 })
             }
             setEvents(events)
         })
+        getUsersData().then((data: any) => {
+            const people: Person[] = []
+            for (const doc of data.docs) {
+                const loc = doc.get('location')
+                people.push({
+                    id: doc.id,
+                    name: doc.get('name') || 'unknown',
+                    status: doc.get('status') || '',
+                    location: loc ? [loc.latitude, loc.longitude] : TEL_LOC,
+                    thumbUrl: doc.get('photoUrl') || roniThumb,
+                })
+            }
+            setUsers(people)
+        })
     }, [])
-    return { eventList }
+    return { eventList, peopleList }
 }
 
 export const Map: FunctionComponent<{}> = () => {
-    const { eventList } = useMapData()
+    const { eventList, peopleList } = useMapData()
 
     const [popupContent, setPopupContent] = useState<React.ReactNode>(null)
     const { current: popup } = useRef(L.popup({}))
@@ -79,7 +64,9 @@ export const Map: FunctionComponent<{}> = () => {
     const onClick = useCallback<L.LeafletEventHandlerFn>(
         ({ target }: L.LeafletEvent) => {
             const { id, type } = target.options
-            setPopupContent(getPopupContent(type, id, { eventList }))
+            setPopupContent(
+                getPopupContent(type, id, { eventList, peopleList })
+            )
             const currentItem = selectedItemRef.current
             if (currentItem) {
                 currentItem.unbindPopup()
@@ -95,7 +82,7 @@ export const Map: FunctionComponent<{}> = () => {
             return
         }
         const map = L.map('map', {
-            center: [32.0853, 34.7818],
+            center: TEL_LOC,
             zoom: 13,
         })
         mapRef.current = map
@@ -154,7 +141,7 @@ export const Map: FunctionComponent<{}> = () => {
 function getPopupContent(
     type: string,
     queryId: string,
-    { eventList }: { eventList: Event[] }
+    { eventList, peopleList }: { eventList: Event[]; peopleList: Person[] }
 ) {
     let content: React.ReactNode = null
     switch (type) {
