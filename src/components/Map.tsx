@@ -40,6 +40,22 @@ export const Map: FunctionComponent<{}> = () => {
     const { current: popup } = useRef(L.popup({}))
     const selectedItemRef = useRef<L.Marker | null>(null)
 
+    const popupWrapperRef = useRef<HTMLDivElement>(null)
+
+    const onClick = useCallback<L.LeafletEventHandlerFn>(
+        ({ target }: L.LeafletEvent) => {
+            const { id, type } = target.options
+            setPopupContent(getPopupContent(type, id))
+            const currentItem = selectedItemRef.current
+            if (currentItem) {
+                currentItem.unbindPopup()
+            }
+            selectedItemRef.current = target
+            target.bindPopup(popup).openPopup()
+        },
+        [popup]
+    )
+
     useEffect(() => {
         const map = L.map('map', {
             center: [32.0853, 34.7818],
@@ -71,23 +87,7 @@ export const Map: FunctionComponent<{}> = () => {
             marker.addTo(map)
             marker.on('click', onClick as any)
         }
-    }, [])
-
-    const onClick = useCallback<L.LeafletEventHandlerFn>(
-        ({ target }: L.LeafletEvent) => {
-            const { id, type } = target.options
-            setPopupContent(getPopupContent(type, id))
-            const currentItem = selectedItemRef.current
-            if (currentItem) {
-                currentItem.unbindPopup()
-            }
-            selectedItemRef.current = target
-            target.bindPopup(popup).openPopup()
-        },
-        []
-    )
-
-    const popupWrapperRef = useRef<HTMLDivElement>(null)
+    }, [onClick, popup])
 
     return (
         <div>
@@ -98,11 +98,14 @@ export const Map: FunctionComponent<{}> = () => {
 }
 
 function getPopupContent(type: string, queryId: string) {
+    let content: React.ReactNode = null
     switch (type) {
         case 'person':
             const personData = peopleList.find(({ id }) => queryId === id)
-            return personData ? <PersonDetails data={personData} /> : null
+            if (personData) {
+                content = <PersonDetails data={personData} />
+            }
             break
     }
-    return null
+    return content
 }

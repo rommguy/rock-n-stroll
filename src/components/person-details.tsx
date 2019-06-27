@@ -9,7 +9,7 @@ interface PersonDetailsProps {
 export const PersonDetails = ({ data }: PersonDetailsProps) => {
     return (
         <div className={css.root}>
-            <img className={css.img} src={data.thumbUrl} />
+            <img className={css.img} src={data.thumbUrl} alt={data.name} />
             <div className={css.details}>
                 <div>{data.name}</div>
                 <div>{data.status}</div>
