@@ -1,22 +1,41 @@
-import { app } from './my-firebase';
+import { app } from './my-firebase'
 
 export interface ChildData {
-    name?: string;
-    age: number;
-    photos: Array<string>;
+    name?: string
+    age: number
+}
+
+interface GeoPoint {
+    latitude: number
+    longitude: number
 }
 
 export interface UserData {
-    id: string;
-    name?: string;
-    photos: Array<string>;
-    location: Location;
-    age?: number;
-    children: Array<ChildData>;
+    id: string
+    email: string
+    name?: string
+    photoUrl: string
+    location: GeoPoint
+    age?: number
+    children: ChildData[]
 }
 
-export const setUserData = (data: UserData) => app.firestore().collection('users').doc(data.id).set(data);
+export const getUserData = async (userId: string): Promise<UserData> => {
+    const userData = ((await app
+        .firestore()
+        .collection('users')
+        .doc(userId)
+        .get()) as unknown) as UserData
+    return userData
+}
 
-export const getUserData = (userId: string) => app.firestore().collection('users').doc(userId).get();
+export const getEventsData = () =>
+    app
+        .firestore()
+        .collection('events')
+        .get()
 
-export const getEventsData = () => app.firestore().collection('events').get()
+export const getCurrentUserEmail = (): string => {
+    const searchParams = new URLSearchParams(window.location.search)
+    return searchParams.get('email') || ''
+}
