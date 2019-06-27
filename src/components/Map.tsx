@@ -11,6 +11,7 @@ import { PersonDetails } from './person-details'
 import { EventDetails } from './event-details'
 import { Person, Event, BaseMapItem } from '../types'
 import ronyThumb from '../roni.png'
+import { getEventsData } from '../services/db'
 
 const peopleList: Person[] = [
     {
@@ -24,7 +25,7 @@ const peopleList: Person[] = [
         id: '2',
         location: [32.0853, 34.7828],
         name: 'עומרי',
-        status: 'מעשן',
+        status: 'מעשן פחות',
         thumbUrl: ronyThumb,
     },
     {
@@ -35,18 +36,42 @@ const peopleList: Person[] = [
         thumbUrl: ronyThumb,
     },
 ]
-const eventList: Event[] = [
-    {
-        id: 'e-1',
-        location: [32.085, 34.7808],
-        name: 'חפש את המטמון לגילאי 3 ומטה',
-        thumbUrl: ronyThumb,
-    },
-]
+// const eventList: Event[] = [
+//     {
+//         id: 'e-1',
+//         location: [32.085, 34.7808],
+//         name: 'חפש את המטמון לגילאי 3 ומטה',
+//         thumbUrl: ronyThumb,
+//     },
+// ]
+
+const useMapData = () => {
+    const [eventList, setEvents] = useState<Event[]>([])
+
+    useEffect(() => {
+        getEventsData().then((data: any) => {
+            const events: Event[] = []
+            for (const doc of data.docs) {
+                const loc = doc.get('location')
+                events.push({
+                    id: doc.id,
+                    name: doc.get('name'),
+                    location: [loc.longitude, loc.latitude],
+                    thumbUrl: '',
+                })
+            }
+            setEvents(events)
+        })
+    }, [])
+    return { eventList }
+}
 
 export const Map: FunctionComponent<{}> = () => {
+    const { eventList } = useMapData()
+
     const [popupContent, setPopupContent] = useState<React.ReactNode>(null)
     const { current: popup } = useRef(L.popup({}))
+    const mapRef = useRef<L.Map | null>(null)
     const selectedItemRef = useRef<L.Marker | null>(null)
 
     const popupWrapperRef = useRef<HTMLDivElement>(null)
@@ -54,7 +79,7 @@ export const Map: FunctionComponent<{}> = () => {
     const onClick = useCallback<L.LeafletEventHandlerFn>(
         ({ target }: L.LeafletEvent) => {
             const { id, type } = target.options
-            setPopupContent(getPopupContent(type, id))
+            setPopupContent(getPopupContent(type, id, { eventList }))
             const currentItem = selectedItemRef.current
             if (currentItem) {
                 currentItem.unbindPopup()
@@ -62,14 +87,18 @@ export const Map: FunctionComponent<{}> = () => {
             selectedItemRef.current = target
             target.bindPopup(popup).openPopup()
         },
-        [popup]
+        [popup, eventList, peopleList]
     )
 
     useEffect(() => {
+        if (mapRef.current) {
+            return
+        }
         const map = L.map('map', {
             center: [32.0853, 34.7818],
             zoom: 13,
         })
+        mapRef.current = map
         // popup
         popup.setContent(popupWrapperRef.current as HTMLDivElement)
 
@@ -85,24 +114,34 @@ export const Map: FunctionComponent<{}> = () => {
                 id: 'mapbox.streets',
             } as any
         ).addTo(map)
+    }, [popup])
 
-        // markers
-        const generateMarker = (
-            { id, location }: BaseMapItem,
-            type: string,
-            icon: L.Icon
-        ) => {
-            const marker = L.marker(location, {
-                icon,
-                id,
-                type,
-            } as any)
-            marker.addTo(map)
-            marker.on('click', onClick as any)
+    useEffect(() => {
+        const map = mapRef.current
+        const markers: L.Marker[] = []
+        console.log('render map with ', eventList, peopleList)
+        if (map) {
+            const generateMarker = (
+                { id, location }: BaseMapItem,
+                type: string,
+                icon: L.Icon
+            ) => {
+                const marker = L.marker(location, {
+                    icon,
+                    id,
+                    type,
+                } as any)
+                marker.addTo(map)
+                marker.on('click', onClick as any)
+                markers.push(marker)
+            }
+            peopleList.map(item => generateMarker(item, 'person', strollerIcon))
+            eventList.map(item => generateMarker(item, 'event', eventIcon))
         }
-        peopleList.map(item => generateMarker(item, 'person', strollerIcon))
-        eventList.map(item => generateMarker(item, 'event', eventIcon))
-    }, [onClick, popup])
+        return () => {
+            markers.forEach(marker => marker.remove())
+        }
+    }, [mapRef.current, peopleList, eventList])
 
     return (
         <div>
@@ -112,7 +151,11 @@ export const Map: FunctionComponent<{}> = () => {
     )
 }
 
-function getPopupContent(type: string, queryId: string) {
+function getPopupContent(
+    type: string,
+    queryId: string,
+    { eventList }: { eventList: Event[] }
+) {
     let content: React.ReactNode = null
     switch (type) {
         case 'person':

@@ -18,3 +18,5 @@ export interface UserData {
 export const setUserData = (data: UserData) => app.firestore().collection('users').doc(data.id).set(data);
 
 export const getUserData = (userId: string) => app.firestore().collection('users').doc(userId).get();
+
+export const getEventsData = () => app.firestore().collection('events').get()
