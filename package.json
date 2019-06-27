@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "firebase": "^6.2.3",
     "history": "^4.9.0",
     "leaflet": "^1.5.1",
     "react": "^16.8.6",
