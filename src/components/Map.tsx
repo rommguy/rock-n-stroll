@@ -21,6 +21,8 @@ import addMeBtnPng from '../icons/add-me-button.png'
 import twoBtnsPng from '../icons/2Buttons.png'
 import { getEventsData, getUsersData, getLocationsData } from '../services/db'
 import css from './map.module.css'
+import { currentUser } from '../services/auth'
+import { Avatar } from '@material-ui/core'
 
 const TEL_LOC: [number, number] = [32.0853, 34.7818]
 const GAN_MEIR_LOC: [number, number] = [32.07311099895673, 34.77311253547669]
@@ -174,12 +176,19 @@ export const Map: FunctionComponent<{}> = () => {
         var latlng = mapRef.current!.mouseEventToLatLng(ev.originalEvent || ev)
         console.log(latlng.lat + ', ' + latlng.lng)
     }
+    const loggedUser = currentUser()
+    const userData = peopleList.find(
+        person => !!loggedUser && loggedUser.email === person.email
+    )
 
     return (
         <div className={css.root} onClick={onClickCor}>
             {/* <button onClick={testClick}>add</button> */}
             <div id="map" className={css.map} style={{ height: '100vh' }} />
             <div ref={popupWrapperRef}>{popupContent}</div>
+            {userData ? (
+                <Avatar className={css.avatar} src={userData.thumbUrl} />
+            ) : null}
             <div className={css.actionBtns}>
                 <img src={twoBtnsPng} alt="twobuttons" />
                 <img src={addMeBtnPng} alt="add me to map" />

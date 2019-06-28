@@ -5,6 +5,12 @@
     position: relative;
     z-index: 1;
 }
+.avatar {
+    position: absolute !important;
+    z-index: 2;
+    top: 10px;
+    left: 10px;
+}
 .actionBtns {
     position: absolute;
     z-index: 2;

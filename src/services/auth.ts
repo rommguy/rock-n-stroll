@@ -5,3 +5,5 @@ export const login = async () => {
     await app.auth().signInWithPopup(new auth.GoogleAuthProvider())
     return app.auth().currentUser!
 }
+
+export const currentUser = () => app.auth().currentUser
