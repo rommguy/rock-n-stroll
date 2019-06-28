@@ -16,6 +16,9 @@
     cursor: pointer;
 }
 
+:global(.leaflet-control-zoom) {
+    display: none;
+}
 :global(.leaflet-popup-tip),
 :global(.leaflet-popup-content-wrapper) {
     background: #f6f4f1;
