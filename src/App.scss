@@ -32,3 +32,18 @@
     transform: rotate(360deg);
   }
 }
+
+.interaction-popup {
+  height: 150px;
+  width: 100%;
+  background-color: white;
+  position: fixed;
+  top: -150px;
+  transition: top ease-in-out 230ms;
+  z-index: 100000;
+
+  &.visible {
+    top: 0;
+  }
+
+}

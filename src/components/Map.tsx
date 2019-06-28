@@ -57,6 +57,7 @@ const useMapData = () => {
                     status: doc.get('status') || '',
                     location: loc ? [loc.latitude, loc.longitude] : TEL_LOC,
                     thumbUrl: doc.get('photoUrl') || roniThumb,
+                    email: doc.get('email') || '',
                 })
             }
             setUsers(people)

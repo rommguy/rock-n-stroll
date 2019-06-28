@@ -50,6 +50,18 @@ export const getUsersData = () =>
         .collection('users')
         .get()
 
+export const getUserDataFromEmail = async (email: string) => {
+    const results = await app
+        .firestore()
+        .collection('users')
+        .where('email', '==', email)
+        .get()
+    if (results.docs.length) {
+        return results.docs[0].data() as UserData
+    }
+    return null
+}
+
 export const getEventsData = () =>
     app
         .firestore()
@@ -73,25 +85,19 @@ export const createMatchRequest = async (
 ): Promise<void> => {
     const matchRequestsColl = app.firestore().collection('matchRequests')
 
-    const results = await app
-        .firestore()
-        .collection('matchRequests')
+    const results = await matchRequestsColl
         .where('requestingUserEmail', '==', requestingUserEmail)
         .where('targetUserEmail', '==', targetUserEmail)
         .get()
     if (results.docs.length) {
-        await resolveMatchRequest(
-            requestingUserEmail,
-            targetUserEmail,
-            MatchStatus.PENDING
-        )
-    } else {
-        await matchRequestsColl.add({
-            requestingUserEmail,
-            targetUserEmail,
-            status: MatchStatus.PENDING,
-        })
+        await matchRequestsColl.doc(results.docs[0].id).delete()
     }
+
+    await matchRequestsColl.add({
+        requestingUserEmail,
+        targetUserEmail,
+        status: MatchStatus.PENDING,
+    })
 }
 
 export const resolveMatchRequest = async (
@@ -122,5 +128,5 @@ export const registerMatchChange = async (
     await app
         .firestore()
         .collection('matchRequests')
-        .onSnapshot({ next: callback })
+        .onSnapshot({ next: callback, error: () => null })
 }

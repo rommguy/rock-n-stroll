@@ -8,6 +8,7 @@ export interface BaseMapItem {
 export interface Person extends BaseMapItem {
     status: string
     thumbUrl: string
+    email: string
 }
 
 export interface Event extends BaseMapItem {
