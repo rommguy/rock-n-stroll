@@ -145,8 +145,7 @@ export const Map: FunctionComponent<{}> = () => {
                 marker.on('click', onClick as any)
                 markers.push(marker)
             }
-            peopleList.map(item => generateMarker(item, 'person', logoIcon))
-            eventList.map(item => generateMarker(item, 'event', eventIcon))
+
             locationList.map(item =>
                 generateMarker(
                     item,
@@ -154,6 +153,8 @@ export const Map: FunctionComponent<{}> = () => {
                     subEventsIcons[item.subtype] || locationIcon
                 )
             )
+            eventList.map(item => generateMarker(item, 'event', eventIcon))
+            peopleList.map(item => generateMarker(item, 'person', logoIcon))
         }
         return () => {
             markers.forEach(marker => marker.remove())

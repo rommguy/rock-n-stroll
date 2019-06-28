@@ -1,6 +1,9 @@
 import React from 'react'
 import { Location } from '../types'
 import lightningIconSvg from '../icons/lightning-icon.svg'
+import playgroundThumb from '../icons/playground-thumb.png'
+import pharmecyThumb from '../icons/pharmecy-thumb.png'
+import beachThumb from '../icons/beach-thumb.png'
 import emptyPng from '../icons/empty.png'
 import css from './location-details.module.css'
 
@@ -13,7 +16,7 @@ export const LocationDetails = ({ data }: LocationDetailsProps) => {
         <div className={css.root}>
             <img
                 className={css.img}
-                src={data.thumbUrl || emptyPng}
+                src={getThumb(data.thumbUrl, data.subtype)}
                 alt={data.name || 'אירוע'}
             />
             <div className={css.info}>
@@ -22,11 +25,11 @@ export const LocationDetails = ({ data }: LocationDetailsProps) => {
                     {translateLocationType(data.subtype)}
                 </div>
             </div>
-            <div className={css.details}>
+            {/* <div className={css.details}>
                 <div className={css.address}>
                     איפה: <b>קינג ג'ורג 1</b>
                 </div>
-            </div>
+            </div> */}
             <div className={css.actions}>
                 <button className={css.reportBtn}>
                     <img src={lightningIconSvg} alt="דווח על מפגע" />
@@ -37,10 +40,29 @@ export const LocationDetails = ({ data }: LocationDetailsProps) => {
     )
 }
 
+const getThumb = (thumbUrl: string, subtype: string): string => {
+    if (thumbUrl) {
+        return thumbUrl
+    }
+    switch (subtype) {
+        case 'playground':
+            return playgroundThumb
+        case 'beach':
+            return beachThumb
+        case 'pharmecy':
+            return pharmecyThumb
+        default:
+            return emptyPng
+    }
+}
 const translateLocationType = (subtype: string): string => {
     switch (subtype) {
         case 'playground':
             return 'גן משחקים'
+        case 'beach':
+            return 'חוף'
+        case 'pharmecy':
+            return 'בית מרקחת'
         default:
             return ' '
     }
