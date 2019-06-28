@@ -15,6 +15,7 @@ export const LocationDetails = ({ data }: LocationDetailsProps) => {
     return (
         <div className={css.root}>
             <img
+                key={getThumb(data.thumbUrl, data.subtype)}
                 className={css.img}
                 src={getThumb(data.thumbUrl, data.subtype)}
                 alt={data.name || 'אירוע'}
