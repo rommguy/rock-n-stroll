@@ -1,7 +1,25 @@
 .root {
+    position: relative;
+}
+.map {
+    position: relative;
+    z-index: 1;
+}
+.actionBtns {
+    position: absolute;
+    z-index: 2;
+    bottom: 10px;
+}
+.actionBtns > img {
+    height: 50px;
+    margin: 0 0.5em;
+    cursor: pointer;
 }
 
 :global(.leaflet-popup-tip),
 :global(.leaflet-popup-content-wrapper) {
     background: #f6f4f1;
 }
+/* :global(.leaflet-marker-icon) {
+    display: none !important;
+} */

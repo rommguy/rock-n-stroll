@@ -17,6 +17,8 @@ import { EventDetails } from './event-details'
 import { LocationDetails } from './location-details'
 import { Person, Event, Location, BaseMapItem } from '../types'
 import roniThumb from '../roni.png'
+import addMeBtnPng from '../icons/add-me-button.png'
+import twoBtnsPng from '../icons/2Buttons.png'
 import { getEventsData, getUsersData, getLocationsData } from '../services/db'
 import css from './map.module.css'
 
@@ -169,8 +171,12 @@ export const Map: FunctionComponent<{}> = () => {
     return (
         <div className={css.root}>
             {/* <button onClick={testClick}>add</button> */}
-            <div id="map" style={{ height: '100vh' }} />
+            <div id="map" className={css.map} style={{ height: '100vh' }} />
             <div ref={popupWrapperRef}>{popupContent}</div>
+            <div className={css.actionBtns}>
+                <img src={twoBtnsPng} />
+                <img src={addMeBtnPng} />
+            </div>
         </div>
     )
 }
