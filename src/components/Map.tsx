@@ -6,7 +6,12 @@ import React, {
     useState,
 } from 'react'
 import L from 'leaflet'
-import { eventIcon, locationIcon, logoIcon, subEventsIcons } from './map-icons'
+import {
+    eventIcon,
+    locationIcon,
+    strollerIcon,
+    subEventsIcons,
+} from './map-icons'
 import { PersonDetails } from './person-details'
 import { EventDetails } from './event-details'
 import { LocationDetails } from './location-details'
@@ -154,7 +159,7 @@ export const Map: FunctionComponent<{}> = () => {
                 )
             )
             eventList.map(item => generateMarker(item, 'event', eventIcon))
-            peopleList.map(item => generateMarker(item, 'person', logoIcon))
+            peopleList.map(item => generateMarker(item, 'person', strollerIcon))
         }
         return () => {
             markers.forEach(marker => marker.remove())
