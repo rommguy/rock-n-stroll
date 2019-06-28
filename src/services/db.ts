@@ -50,6 +50,18 @@ export const getUsersData = () =>
         .collection('users')
         .get()
 
+export const getUserDataFromEmail = async (email: string) => {
+    const results = await app
+        .firestore()
+        .collection('users')
+        .where('email', '==', email)
+        .get()
+    if (results.docs.length) {
+        return results.docs[0].data() as UserData
+    }
+    return null
+}
+
 export const getEventsData = () =>
     app
         .firestore()
@@ -67,18 +79,26 @@ export const getCurrentUserEmail = (): string => {
     return searchParams.get('email') || ''
 }
 
-export const createMatchRequest = (
+export const createMatchRequest = async (
     requestingUserEmail: string,
     targetUserEmail: string
-): Promise<firestore.DocumentReference> =>
-    app
-        .firestore()
-        .collection('matchRequests')
-        .add({
-            requestingUserEmail,
-            targetUserEmail,
-            status: MatchStatus.PENDING,
-        })
+): Promise<void> => {
+    const matchRequestsColl = app.firestore().collection('matchRequests')
+
+    const results = await matchRequestsColl
+        .where('requestingUserEmail', '==', requestingUserEmail)
+        .where('targetUserEmail', '==', targetUserEmail)
+        .get()
+    if (results.docs.length) {
+        await matchRequestsColl.doc(results.docs[0].id).delete()
+    }
+
+    await matchRequestsColl.add({
+        requestingUserEmail,
+        targetUserEmail,
+        status: MatchStatus.PENDING,
+    })
+}
 
 export const resolveMatchRequest = async (
     requestingUserEmail: string,
@@ -100,4 +120,13 @@ export const resolveMatchRequest = async (
             .doc(results.docs[0].id)
             .set(updatedRequest)
     }
+}
+
+export const registerMatchChange = async (
+    callback: (snapshot: firestore.QuerySnapshot) => void
+) => {
+    await app
+        .firestore()
+        .collection('matchRequests')
+        .onSnapshot({ next: callback, error: () => null })
 }
