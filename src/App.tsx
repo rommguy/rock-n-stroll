@@ -71,7 +71,7 @@ export const App: FunctionComponent<{}> = () => {
                 )
                 if (targetUser) {
                     setInteractionContent({
-                        text: `${targetUser.name} רוצה להיפגש!`,
+                        text: `${targetUser.name} מסכים להיפגש!`,
                         fromUser: targetUser,
                         onClick: noop,
                         showApproveButton: false,
@@ -101,6 +101,8 @@ export const App: FunctionComponent<{}> = () => {
         }
     }, [interactionContent])
 
+    const isSmallPopup =
+        interactionContent.text && !interactionContent.showApproveButton
     return (
         <Router>
             <div className="App">
@@ -109,15 +111,26 @@ export const App: FunctionComponent<{}> = () => {
                 <div
                     className={`interaction-popup ${
                         showPopup ? 'visible' : 'hidden'
-                    }`}
+                    } ${isSmallPopup ? 'small' : ''}`}
                 >
-                    <div className="popup-text">{interactionContent.text}</div>
+                    <div className="content">
+                        {interactionContent.fromUser && (
+                            <img
+                                className="popup-interaction-image"
+                                alt="user-image"
+                                src={interactionContent.fromUser.photoUrl}
+                            />
+                        )}
+                        <span className="popup-text">
+                            {interactionContent.text}
+                        </span>
+                    </div>
+
                     <div className="actions-area">
                         {interactionContent.showApproveButton && (
                             <span>
                                 <Button
                                     variant="contained"
-                                    color="primary"
                                     onClick={() => {
                                         interactionContent.onClick()
                                         setShowPopup(false)
@@ -125,9 +138,7 @@ export const App: FunctionComponent<{}> = () => {
                                 >
                                     יאללה, בכיף
                                 </Button>
-                                <Button variant="contained" color="primary">
-                                    צפה בפרופיל
-                                </Button>{' '}
+                                <Button variant="contained">צפה בפרופיל</Button>{' '}
                             </span>
                         )}
                     </div>
